@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>首爾冬季浪漫行 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --kakao-yellow: #FFDE00; --ryan-orange: #FFAB40; --bg: #FFF9F2; }
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg); margin: 0; color: #333; }
+        header { background: white; text-align: center; padding: 20px; border-bottom: 4px solid var(--kakao-yellow); }
+        .date-nav { display: flex; overflow-x: auto; padding: 10px; background: white; sticky; top: 0; z-index: 100; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .date-btn { flex: 0 0 auto; padding: 10px 15px; border-radius: 12px; border: 1px solid #ddd; background: #f9f9f9; font-weight: bold; cursor: pointer; }
+        .date-btn.active { background: var(--kakao-yellow); border-color: var(--kakao-yellow); }
+        .container { max-width: 500px; margin: auto; padding: 15px 15px 100px; }
+        .day-panel { display: none; }
+        .day-panel.active { display: block; }
+        .day-header { background: #FFD1DC; padding: 15px; border-radius: 15px; text-align: center; margin-bottom: 20px; font-weight: bold; }
+        .spot-card { background: white; border-radius: 15px; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); overflow: hidden; border-left: 6px solid var(--ryan-orange); }
+        .spot-img { width: 100%; display: block; }
+        .spot-info { padding: 15px; }
+        .spot-time { color: var(--ryan-orange); font-weight: bold; font-size: 0.9rem; }
+        .spot-title { font-size: 1.2rem; font-weight: bold; margin: 5px 0; display: flex; justify-content: space-between; align-items: center; }
+        .naver-link { background: #03C75A; color: white; text-decoration: none; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; }
+        .memo-box { background: #FFFBE6; border: 2px dashed #FFD54F; border-radius: 15px; padding: 15px; margin-top: 30px; }
+        .memo-title { color: #D84315; font-weight: bold; margin-bottom: 8px; border-bottom: 1px solid #FFD54F; padding-bottom: 5px; }
+        .memo-text { font-size: 0.9rem; white-space: pre-line; color: #555; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1 style="margin:0; font-size:1.4rem;">❄️ 首爾冬季浪漫行 🍑</h1>
+    <p style="margin:5px 0 0; font-size:0.8rem; color: #888;">2026/01/23 - 01/31 完整攻略</p>
+</header>
+
+<div class="date-nav" id="dateNav"></div>
+<div class="container" id="mainContent"></div>
+
+<script>
+    const data = [
+        { 
+            day: 1, date: "01/23 (五)", theme: "抵達 & 永登浦購物日", img: "day1.jpg", 
+            memo: "📍 機場→民宿：搭乘「普通車 (All Stop Train)」，轉車一次(弘大入口站轉2號線)最便宜省錢。\n📍 永登浦重點：地下街挖寶平價服飾、時代廣場大型購物中心。",
+            spots: [{t:"10:30", s:"抵達 仁川機場 T1"}, {t:"14:30", s:"永登浦地下街"}, {t:"17:00", s:"時代廣場 & Daiso"}]
+        },
+        { 
+            day: 2, date: "01/24 (六)", theme: "傳統市場與韓屋巡禮", img: "day2.jpg", 
+            memo: "📍 散步攻略：從廣藏市場北門沿著「清溪川」往西走約 15-20 分鐘即可抵達仁寺洞。\n📍 益善洞：由鐘路3街站4號出口進入最快。",
+            spots: [{t:"10:15", s:"廣藏市場美食"}, {t:"13:00", s:"仁寺洞主街"}, {t:"15:15", s:"益善洞韓屋村"}]
+        },
+        { 
+            day: 3, date: "01/25 (日)", theme: "聖水、建大與明洞全制霸", img: "day3.jpg", 
+            memo: "📍 明洞攻略：Daiso 明洞站店有12層樓，建議搭電梯到頂樓往下逛最省力。\n📍 聖水洞：Dior 聖水步行至 SM 總部約 15-20 分鐘。",
+            spots: [{t:"10:15", s:"聖水洞核心區"}, {t:"14:00", s:"建大貨櫃屋"}, {t:"18:30", s:"明洞 Daiso"}]
+        },
+        { 
+            day: 4, date: "01/26 (一)", theme: "水原華城與星空圖書館", img: "day4.jpg", 
+            memo: "📍 水原攻略：從堂山搭1號線直達水原站後，建議轉公車或計程車(約15分)前往華城區。\n📍 星空圖書館位於全新的 Starfield Suwon 內。",
+            spots: [{t:"11:00", s:"水原華城行宮"}, {t:"13:00", s:"八達門炸雞街"}, {t:"17:30", s:"水原星空圖書館"}]
+        },
+        { 
+            day: 5, date: "01/27 (二)", theme: "東大門淘寶 & 南山塔夕陽", img: "day5.jpg", 
+            memo: "📍 南山塔交通：DDP 附近搭乘「01號黃色循環公車」可直達山頂。\n📍 市廳溜冰：建議 16:30-17:30 抵達南山看夕陽，再搭車去溜冰。",
+            spots: [{t:"10:15", s:"昌信洞玩具街"}, {t:"15:30", s:"南山首爾塔"}, {t:"19:30", s:"市廳戶外溜冰"}]
+        },
+        { 
+            day: 6, date: "01/28 (三)", theme: "穿韓服遊古宮", img: "day6.jpg", 
+            memo: "📍 步行攻略：西巡邏街沿著宗廟石牆路走非常浪漫，適合咖啡廳賞景。\n📍 景福宮→通仁市場：步行約 7 分鐘即可換銅錢買便當。",
+            spots: [{t:"11:15", s:"通仁市場銅錢便當"}, {t:"13:00", s:"景福宮韓服體驗"}, {t:"16:30", s:"昌德宮參觀"}]
+        },
+        { 
+            day: 7, date: "01/29 (四)", theme: "江原道滑雪一日遊", img: "day7.jpg", 
+            memo: "📍 集合提醒：弘大入口站8號出口，務必準時 06:50 集合！\n📍 滑雪後：回弘大吃「荒謬的生肉」補充體力超享受。",
+            spots: [{t:"06:50", s:"弘大集合出發"}, {t:"10:30", s:"Welli Hilli 滑雪"}, {t:"19:30", s:"弘大烤肉晚餐"}]
+        },
+        { 
+            day: 8, date: "01/30 (五)", theme: "首爾三大購物聖地制霸", img: "day8.jpg", 
+            memo: "📍 交通關鍵：利用「堂山站」當轉折點，避開在大站轉乘迷路。\n📍 Goto Mall：人潮多且悶熱，建議設定 2 小時快閃掃貨。",
+            spots: [{t:"10:30", s:"The Hyundai Seoul"}, {t:"14:00", s:"Goto Mall 地下街"}, {t:"16:30", s:"弘大商圈"}]
+        },
+        { 
+            day: 9, date: "01/31 (六)", theme: "望遠市場美食與返程", img: "day9.jpg", 
+            memo: "📍 交通建議：望遠市場→延南洞這段建議搭 Kakao T 節省時間。\n📍 提醒：預留 1.5 小時交通時間至機場辦理退稅與登機。",
+            spots: [{t:"10:30", s:"望遠市場"}, {t:"12:30", s:"延南洞林道公園"}, {t:"19:45", s:"機場起飛返家"}]
+        }
+    ];
+
+    const nav = document.getElementById('dateNav');
+    const container = document.getElementById('mainContent');
+
+    data.forEach((d, i) => {
+        const btn = document.createElement('button');
+        btn.className = `date-btn ${i===0?'active':''}`;
+        btn.innerText = `Day ${d.day}`;
+        btn.onclick = () => {
+            document.querySelectorAll('.date-btn').forEach(b=>b.classList.remove('active'));
+            document.querySelectorAll('.day-panel').forEach(p=>p.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(`p${i}`).classList.add('active');
+            window.scrollTo({top:0, behavior:'smooth'});
+        };
+        nav.appendChild(btn);
+
+        const panel = document.createElement('div');
+        panel.className = `day-panel ${i===0?'active':''}`;
+        panel.id = `p${i}`;
+        
+        let spotsHtml = d.spots.map(s => `
+            <div class="spot-card">
+                <div class="spot-info">
+                    <div class="spot-time">⏰ ${s.t}</div>
+                    <div class="spot-title">${s.s} <a class="naver-link" href="https://map.naver.com/v5/search/${encodeURIComponent(s.s)}" target="_blank">📍 Naver Map</a></div>
+                </div>
+            </div>
+        `).join('');
+
+        panel.innerHTML = `
+            <div class="day-header">${d.date} <br> ${d.theme}</div>
+            <img src="${d.img}" class="spot-img" onerror="this.style.display='none'">
+            ${spotsHtml}
+            <div class="memo-box">
+                <div class="memo-title">🦁 交通指引與備忘錄</div>
+                <div class="memo-text">${d.memo}</div>
+            </div>
+        `;
+        container.appendChild(panel);
+    });
+</script>
+</body>
+</html>
