@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>首爾冬季浪漫行 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-pink: #FFD1DC;
+            --primary-blue: #A2D2FF;
+            --accent-yellow: #FFDE59;
+            --text-dark: #4A4A4A;
+            --bg-cream: #FFF9F2;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: var(--bg-cream);
+            margin: 0;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--primary-pink);
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 5px solid #FFB7C5;
+        }
+
+        header h1 { margin: 0; font-size: 1.6rem; color: #D81B60; }
+        .subtitle { font-size: 0.9rem; margin-top: 8px; font-weight: bold; }
+
+        /* Date Selector */
+        .date-nav {
+            display: flex;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 15px;
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            gap: 10px;
+        }
+
+        .date-btn {
+            background: #f0f0f0;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .date-btn.active {
+            background: var(--accent-yellow);
+            color: #5D4037;
+            transform: scale(1.1);
+        }
+
+        /* Content Area */
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 0 15px 100px;
+        }
+
+        .day-panel { display: none; animation: slideUp 0.4s ease; }
+        .day-panel.active { display: block; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Weather Card */
+        .weather-info {
+            background: var(--primary-blue);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        /* Timeline Card */
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 2px solid var(--primary-pink);
+        }
+
+        .event-item {
+            display: flex;
+            padding: 15px 0;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .time {
+            min-width: 65px;
+            font-weight: bold;
+            color: #FF6B6B;
+        }
+
+        .detail { flex: 1; position: relative; }
+        .map-link {
+            display: inline-flex;
+            align-items: center;
+            background: #03C75A;
+            color: white;
+            text-decoration: none;
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 5px;
+            margin-left: 5px;
+        }
+
+        .tips-section {
+            margin-top: 20px;
+            background: #FFF9C4;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            border: 1px solid #FFD54F;
+        }
+
+        .character-icon { font-size: 1.5rem; margin-right: 10px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>❄️ 首爾冬季浪漫行 🍑</h1>
+    <div class="subtitle">2026/01/23 - 01/31 · 9天精選行程</div>
+</header>
+
+<div class="date-nav" id="dateNav"></div>
+
+<div class="container" id="content"></div>
+
+<script>
+    const itinerary = [
+        { day: 1, date: "01/23 (五)", theme: "抵達 & 永登浦購物日 ✈️", weather: "-2°C / 5°C ☀️", tips: "AREX普通車到弘大轉2號線到堂山最方便！", events: [
+            {time: "10:30", info: "抵達仁川機場 T1", map: "Incheon Airport Terminal 1"},
+            {time: "13:00", info: "堂山站民宿 Check-in", map: "Dangsan Station"},
+            {time: "14:30", info: "午餐：永登浦地下街美食", map: "Yeongdeungpo Underground Mall"},
+            {time: "17:00", info: "永登浦百貨 & 時代廣場", map: "Times Square Seoul"},
+            {time: "19:30", info: "晚餐：永登浦周邊", map: "Yeongdeungpo Station"}
+        ]},
+        { day: 2, date: "01/24 (六)", theme: "傳統市場與韓屋巡禮 🏮", weather: "-4°C / 3°C ❄️", tips: "益善洞巷弄多，適合慢慢拍照打卡。", events: [
+            {time: "10:15", info: "廣藏市場 (吃綠豆煎餅)", map: "Gwangjang Market"},
+            {time: "13:00", info: "仁寺洞主街 (Ssamzigil)", map: "Ssamzigil"},
+            {time: "15:15", info: "益善洞韓屋村咖啡廳", map: "Ikseon-dong Hanok Village"},
+            {time: "18:00", info: "鐘路周邊美食晚餐", map: "Jongno 3-ga"}
+        ]},
+        { day: 3, date: "01/25 (日)", theme: "聖水、建大與明洞全制霸 🛍️", weather: "-3°C / 4°C 🌤️", tips: "Daiso 明洞站店有12層樓，建議搭電梯到頂樓往下逛。", events: [
+            {time: "10:15", info: "聖水洞 (Dior聖水、咖啡街)", map: "Seongsu-dong Cafe Street"},
+            {time: "11:30", info: "SM 娛樂總部 KWANGYA", map: "KWANGYA@SEOUL"},
+            {time: "14:00", info: "建大 Common Ground 貨櫃屋", map: "Common Ground"},
+            {time: "17:30", info: "明洞新世界百貨燈光秀", map: "Shinsegae Department Store Main"},
+            {time: "18:30", info: "Daiso 明洞站店 (12層樓)", map: "Daiso Myeongdong Station"}
+        ]},
+        { day: 4, date: "01/26 (一)", theme: "水原華城與星空圖書館 🏰", weather: "-5°C / 2°C ☁️", tips: "水原星空圖書館在 Starfield Suwon 內，超壯觀！", events: [
+            {time: "11:00", info: "水原華城 (八達門、行宮)", map: "Hwaseong Fortress"},
+            {time: "13:00", info: "水原炸雞一條街午餐", map: "Suwon Chicken Street"},
+            {time: "15:30", info: "華虹門城牆步道散步", map: "Hwahongmun Gate"},
+            {time: "17:30", info: "水原星空圖書館", map: "Starfield Suwon"}
+        ]},
+        { day: 5, date: "01/27 (二)", theme: "東大門淘寶 & 南山塔夕陽 🗼", weather: "-3°C / 5°C ☀️", tips: "01號黃色循環公車可直達南山塔頂。", events: [
+            {time: "10:15", info: "昌信洞玩具文具街", map: "Changsin-dong Stationery Store Street"},
+            {time: "13:30", info: "DDP 東大門設計廣場", map: "Dongdaemun Design Plaza"},
+            {time: "15:30", info: "南山首爾塔看夕陽", map: "N Seoul Tower"},
+            {time: "19:30", info: "市廳廣場戶外溜冰", map: "Seoul Plaza Ice Rink"}
+        ]},
+        { day: 6, date: "01/28 (三)", theme: "穿韓服遊古宮 🎎", weather: "-4°C / 3°C ❄️", tips: "穿韓服進入景福宮與昌德宮是免費的喔！", events: [
+            {time: "09:45", info: "國立古宮博物館", map: "National Palace Museum of Korea"},
+            {time: "11:15", info: "通仁市場 (用銅錢買便當)", map: "Tongin Market"},
+            {time: "13:00", info: "景福宮 & 韓服體驗", map: "Gyeongbokgung Palace"},
+            {time: "16:30", info: "昌德宮 (世界文化遺產)", map: "Changdeokgung Palace"}
+        ]},
+        { day: 7, date: "01/29 (四)", theme: "江原道滑雪一日遊 ⛷️", weather: "-8°C / 0°C ❄️", tips: "集合地點在弘大站8號出口，務必準時！", events: [
+            {time: "06:50", info: "弘大集合出發", map: "Hongik Univ. Station Exit 8"},
+            {time: "10:30", info: "滑雪基礎教學課程", map: "Welli Hilli Park"},
+            {time: "17:00", info: "回程巴士出發", map: "Welli Hilli Park"},
+            {time: "19:30", info: "晚餐：弘大荒謬的生肉", map: "Ungteori Saenggogi Hongdae"}
+        ]},
+        { day: 8, date: "01/30 (五)", theme: "三大購物聖地一日全制霸 🛍️", weather: "-2°C / 6°C ☁️", tips: "Goto Mall 衣服最便宜，記得保留體力給弘大晚上。", events: [
+            {time: "10:30", info: "The Hyundai Seoul (最美百貨)", map: "The Hyundai Seoul"},
+            {time: "14:00", info: "Goto Mall 高速巴士地下街", map: "Goto Mall"},
+            {time: "16:30", info: "弘大商圈 & Kakao Friends", map: "Kakao Friends Hongdae"},
+            {time: "20:30", info: "弘大街頭表演 & 逛街", map: "Hongdae Walking Street"}
+        ]},
+        { day: 9, date: "01/31 (六)", theme: "望遠市場美食與返程 🛫", weather: "0°C / 7°C 🌤️", tips: "望遠市場的炸雞丁和糖餅必吃！", events: [
+            {time: "10:30", info: "望遠市場早午餐", map: "Mangwon Market"},
+            {time: "12:30", info: "延南洞林道公園咖啡廳", map: "Gyeongui Line Forest Park"},
+            {time: "15:30", info: "出發前往仁川機場", map: "Incheon Airport Terminal 1"},
+            {time: "19:45", info: "搭乘長榮 BR159 起飛", map: "Incheon Airport"}
+        ]}
+    ];
+
+    const nav = document.getElementById('dateNav');
+    const content = document.getElementById('content');
+
+    itinerary.forEach((day, idx) => {
+        // Nav Buttons
+        const btn = document.createElement('button');
+        btn.className = `date-btn ${idx === 0 ? 'active' : ''}`;
+        btn.innerText = `Day ${day.day}`;
+        btn.onclick = () => showDay(idx);
+        nav.appendChild(btn);
+
+        // Panels
+        const panel = document.createElement('div');
+        panel.className = `day-panel ${idx === 0 ? 'active' : ''}`;
+        panel.id = `panel-${idx}`;
+
+        const eventsHtml = day.events.map(e => `
+            <div class="event-item">
+                <div class="time">${e.time}</div>
+                <div class="detail">
+                    ${e.info}
+                    <a class="map-link" href="https://map.naver.com/v5/search/${encodeURIComponent(e.map)}" target="_blank">📍 地圖</a>
+                </div>
+            </div>
+        `).join('');
+
+        panel.innerHTML = `
+            <div class="weather-info">
+                <span>📅 ${day.date}</span>
+                <span>🌡️ ${day.weather}</span>
+            </div>
+            <h2 style="color:#D81B60; margin-bottom:10px;">${day.theme}</h2>
+            <div class="card">${eventsHtml}</div>
+            <div class="tips-section">
+                <strong>🦁 Ryan 的叮嚀：</strong><br>${day.tips}
+            </div>
+        `;
+        content.appendChild(panel);
+    });
+
+    function showDay(index) {
+        document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.day-panel').forEach(p => p.classList.remove('active'));
+        
+        document.querySelectorAll('.date-btn')[index].classList.add('active');
+        document.getElementById(`panel-${index}`).classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>
